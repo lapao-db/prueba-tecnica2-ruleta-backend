@@ -4,16 +4,27 @@ import { apuestaModel } from "../models/apuesta.model.js";
 // Crear ruleta - POST
 export const postRuleta = async (request, response) =>{
     try {
-        const ruleta = await ruletaModel.create();
+        const ruleta = await ruletaModel.create({
+            estado: 'abierta',
+            numeroGanador: null,
+            colorGanador: null,
+            fechaCreacion: new Date()
+        });
+        
+        console.log('✅ Ruleta creada:', {
+            id: ruleta._id,
+            estado: ruleta.estado
+        });
+
         return response.status(201).json({
-            "mensaje" : "Ruleta creada correctamente",
-            "id": ruleta._id,
-            "estado": ruleta.estado 
+            mensaje : "Ruleta creada correctamente",
+            id: ruleta._id,
+            estado: ruleta.estado 
         });
     } catch (error) {
         return response.status(400).json({
-            "mensaje": "Ocurrio un error al crear Ruleta",
-            "error": "error.message || error"
+            mensaje: "Ocurrio un error al crear Ruleta",
+            error: error.message || error
         });
     }
 }
@@ -21,8 +32,8 @@ export const postRuleta = async (request, response) =>{
 // Abrir ruleta - PUT 
 export const abrirRuleta = async (request, response) =>{
     try {
-        const {id} = request.params;
-        const ruleta = await ruletaModel.findById(id);
+        const {idRuleta} = request.params;
+        const ruleta = await ruletaModel.findById(idRuleta);
         
         if (!ruleta) {
             return response.status(404).json({ 
@@ -43,15 +54,15 @@ export const abrirRuleta = async (request, response) =>{
         await ruleta.save();
                      
         response.status(200).json({
-            mensaje: 'Ruleta abierta exitosamente disponible ',
+            mensaje: 'Ruleta abierta exitosamente disponible para apostar ',
             estado: ruleta.estado
         });
        
 
     } catch (error) {
        return response.status(400).json({
-            "mensaje": "Ocurrio un error al abrir Ruleta",
-            "error": "error.message || error"
+            mensaje: "Ocurrio un error al abrir Ruleta",
+            error: error.message || error
         }); 
     }
 }
@@ -116,6 +127,7 @@ export const cerrarRuleta = async (request, response) =>{
         }
 
         return response.status(200).json({
+            mensaje: 'Ruleta cerrada exitosamente. ',
             calcNumGanador,
             calcColorGanador,
             resultadosApuestas
@@ -124,8 +136,8 @@ export const cerrarRuleta = async (request, response) =>{
         
     } catch (error) {
         return response.status(400).json({
-            "mensaje": "Ocurrio un error al cerrar la Ruleta",
-            "error": "error.message || error"
+            mensaje: "Ocurrio un error al cerrar la Ruleta",
+            error: error.message || error
         });    
     }
 }
@@ -143,7 +155,7 @@ export const getListaRuletas = async (request, response) => {
     } catch (error) {
        return response.status(400).json({
             "mensaje": "Ocurrio un error al mostrar todas las Ruletas",
-            "error": "error.message || error"
+            error: error.message || error
         });  
     }
 }
