@@ -4,7 +4,7 @@ import { apuestaModel } from "../models/apuesta.model.js";
 // Crear ruleta - POST
 export const postRuleta = async (request, response) =>{
     try {
-        await ruletaModel.create(request.body);
+        const ruleta = await ruletaModel.create();
         return response.status(201).json({
             "mensaje" : "Ruleta creada correctamente",
             "id": ruleta._id,
